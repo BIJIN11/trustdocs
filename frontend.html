@@ -1,0 +1,2107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>TrustDocs - Blockchain Document Verification</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.95);
+            color: #2c3e50;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+        }
+        
+h1 {
+    font-size: 3rem;
+    margin-bottom: 10px;
+    font-weight: 700;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+
+    -webkit-background-clip: text;
+    background-clip: text;   /* 👈 ADD HERE */
+
+    -webkit-text-fill-color: transparent;
+}  
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+            color: #666;
+        }
+        
+        .role-selection {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-top: 40px;
+        }
+        
+        .role-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            padding: 40px 30px;
+            width: 320px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+        }
+        
+        .role-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .role-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+        
+        .student-icon { color: #3498db; }
+        .issuer-icon { color: #2ecc71; }
+        .verifier-icon { color: #e74c3c; }
+        
+        .role-title {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+        
+        .role-description {
+            color: #7f8c8d;
+            margin-bottom: 25px;
+            min-height: 60px;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 14px 30px;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .student-btn { background: linear-gradient(135deg, #3498db, #2980b9); }
+        .student-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(52, 152, 219, 0.4); }
+        
+        .issuer-btn { background: linear-gradient(135deg, #2ecc71, #27ae60); }
+        .issuer-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(46, 204, 113, 0.4); }
+        
+        .verifier-btn { background: linear-gradient(135deg, #e74c3c, #c0392b); }
+        .verifier-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(231, 76, 60, 0.4); }
+        
+        .back-btn {
+            background: #95a5a6;
+            margin-right: 15px;
+        }
+        
+        .back-btn:hover {
+            background: #7f8c8d;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 25px;
+            color: #2c3e50;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+        }
+        
+        .section-title i {
+            margin-right: 12px;
+            font-size: 1.8rem;
+            color: #667eea;
+        }
+        
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+        
+        .form-group {
+            flex: 1;
+            min-width: 250px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e0e3e8;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            outline: none;
+        }
+        
+        .drop-area {
+            border: 3px dashed #667eea;
+            border-radius: 15px;
+            padding: 50px 20px;
+            text-align: center;
+            cursor: pointer;
+            margin-bottom: 25px;
+            background: #f8fafc;
+            transition: all 0.3s ease;
+        }
+        
+        .drop-area:hover {
+            background: #f0f3ff;
+            border-color: #764ba2;
+        }
+        
+        .drop-area i {
+            font-size: 70px;
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+        
+        .drop-text {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .browse-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 14px 30px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .browse-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .file-info {
+            margin-top: 20px;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea10, #764ba210);
+            border-radius: 10px;
+            display: none;
+            border-left: 4px solid #667eea;
+        }
+        
+        .file-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 1.1rem;
+            color: #2c3e50;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        th {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 15px;
+            border: 1px solid #f0f0f0;
+        }
+        
+        tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .action-btn {
+            padding: 8px 15px;
+            margin: 0 5px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            color: white;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .view-btn { background: #3498db; }
+        .analyze-btn { background: #f39c12; }
+        .valid-btn { background: #2ecc71; }
+        .invalid-btn { background: #e74c3c; }
+        .qr-btn { background: #1abc9c; }
+        
+        footer {
+            text-align: center;
+            padding: 20px 0;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            margin-top: 40px;
+        }
+        
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+        
+        .popup-message {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 450px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        .popup-message p {
+            font-size: 1.2rem;
+            color: #2c3e50;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+        
+        .popup-message .btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            padding: 12px 35px;
+            font-size: 1.1rem;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @media(max-width: 768px) {
+            .form-row {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .role-selection {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .role-card {
+                width: 100%;
+                max-width: 350px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+        }
+
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+        
+        .status-pending { background: #f39c12; color: white; }
+        .status-valid { background: #2ecc71; color: white; }
+        .status-invalid { background: #e74c3c; color: white; }
+        .status-issued { background: #3498db; color: white; }
+
+       .header-actions {
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .header-actions h1 {
+            text-align: center;
+            justify-self: center;
+            margin: 0;
+        }
+        
+        .header-actions button {
+            padding: 10px 20px;
+        }
+
+        .preview-container {
+            margin-top: 20px;
+            border: 2px solid #667eea;
+            border-radius: 15px;
+            padding: 20px;
+            background: white;
+            max-height: 600px;
+            overflow: auto;
+            text-align: center;
+        }
+
+        .preview-container img,
+        .preview-container iframe {
+            max-width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Modal styles */
+        .document-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 10000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 95%;
+            max-height: 95%;
+            overflow: auto;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 8px 20px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .modal-close:hover {
+            background: #c0392b;
+        }
+
+        .modal-image {
+            max-width: 100%;
+            max-height: 80vh;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .qr-container {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .qr-image {
+            max-width: 300px;
+            margin: 20px auto;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            padding: 10px;
+        }
+        
+        .verification-badge {
+            background: #2ecc71;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            display: inline-block;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        
+        .embedded-badge {
+            background: #f39c12;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            margin-left: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- POPUP MESSAGE -->
+        <div class="popup-overlay" id="popupOverlay">
+            <div class="popup-message">
+                <p id="popupText"></p>
+                <button class="btn" onclick="closePopup()">OK</button>
+            </div>
+        </div>
+
+        <!-- HEADER -->
+        <header>
+            <h1>TrustDocs</h1>
+            <p class="subtitle">Blockchain-based document verification with AI validation</p>
+        </header>
+
+        <!-- ROLE SELECTION PAGE -->
+        <div id="rolePage">
+            <div class="role-selection">
+                <div class="role-card" onclick="showStudentAuth()">
+                    <div class="role-icon"><i class="fas fa-user-graduate student-icon"></i></div>
+                    <h2 class="role-title">Student</h2>
+                    <p class="role-description">Submit documents for verification and track status</p>
+                    <div class="btn student-btn">Enter as Student</div>
+                </div>
+                <div class="role-card" onclick="showIssuerAuth()">
+                    <div class="role-icon"><i class="fas fa-university issuer-icon"></i></div>
+                    <h2 class="role-title">Issuer</h2>
+                    <p class="role-description">Issue and verify documents with blockchain security</p>
+                    <div class="btn issuer-btn">Enter as Issuer</div>
+                </div>
+                <div class="role-card" onclick="showVerifierForm()">
+                    <div class="role-icon"><i class="fas fa-search verifier-icon"></i></div>
+                    <h2 class="role-title">Verifier</h2>
+                    <p class="role-description">Validate document authenticity using AI verification</p>
+                    <div class="btn verifier-btn">Enter as Verifier</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- STUDENT AUTH SELECTION -->
+        <div id="studentAuthPage" style="display:none;">
+            <header>
+                <div class="header-actions">
+                    <button onclick="goBackToRoles()" class="btn back-btn"><i class="fas fa-arrow-left"></i> Back</button>
+                    <h1 style="margin:0;text-align: center;">Student Authentication</h1>
+                </div>
+                <p class="subtitle">Choose to register or sign in</p>
+            </header>
+            <div class="role-selection">
+                <div class="role-card" onclick="showStudentRegister()">
+                    <div class="role-icon"><i class="fas fa-user-plus student-icon"></i></div>
+                    <h2 class="role-title">Register</h2>
+                    <p class="role-description">Create a new student account</p>
+                    <div class="btn student-btn">Register</div>
+                </div>
+                <div class="role-card" onclick="showStudentLogin()">
+                    <div class="role-icon"><i class="fas fa-sign-in-alt student-icon"></i></div>
+                    <h2 class="role-title">Sign In</h2>
+                    <p class="role-description">Login to your existing account</p>
+                    <div class="btn student-btn">Sign In</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- STUDENT REGISTRATION -->
+        <div id="studentRegisterPage" style="display:none;">
+            <header>
+                <div class="header-actions">
+                    <button onclick="goBackToAuth()" class="btn back-btn"><i class="fas fa-arrow-left"></i> Back</button>
+                    <h1 style="margin:0;text-align: center;">Student Registration</h1>
+                </div>
+                <p class="subtitle">Create your student account</p>
+            </header>
+            <div class="card">
+                <h2 class="section-title"><i class="fas fa-user-plus"></i> Registration Form</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="regUsername">Username *</label>
+                        <input type="text" id="regUsername" class="form-control" placeholder="Choose a username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="regEmail">Email Address *</label>
+                        <input type="email" id="regEmail" class="form-control" placeholder="Enter your email" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="regPassword">Password *</label>
+                        <input type="password" id="regPassword" class="form-control" placeholder="Create password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="regConfirmPassword">Confirm Password *</label>
+                        <input type="password" id="regConfirmPassword" class="form-control" placeholder="Confirm password" required>
+                    </div>
+                </div>
+                <div style="text-align:center;">
+                    <button class="btn student-btn" onclick="registerStudent()">
+                        <i class="fas fa-user-plus"></i> Create Account
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- STUDENT LOGIN -->
+        <div id="studentLoginPage" style="display:none;">
+            <header>
+                <div class="header-actions">
+                    <button onclick="goBackToAuth()" class="btn back-btn"><i class="fas fa-arrow-left"></i> Back</button>
+                    <h1 style="margin:0;text-align: center;">Student Login</h1>
+                </div>
+                <p class="subtitle">Sign in to your account</p>
+            </header>
+            <div class="card">
+                <h2 class="section-title"><i class="fas fa-sign-in-alt"></i> Login Form</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="loginUsername">Username *</label>
+                        <input type="text" id="loginUsername" class="form-control" placeholder="Enter username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">Password *</label>
+                        <input type="password" id="loginPassword" class="form-control" placeholder="Enter password" required>
+                    </div>
+                </div>
+                <div style="text-align:center;">
+                    <button class="btn student-btn" onclick="loginStudent()">
+                        <i class="fas fa-sign-in-alt"></i> Sign In
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- STUDENT PORTAL -->
+        <div id="studentPage" style="display:none;">
+            <header>
+                <div class="header-actions">
+                    <button onclick="goBackToRoles()" class="btn back-btn"><i class="fas fa-arrow-left"></i> Back</button>
+                    <h1 style="margin:0;text-align: center;">Student Portal</h1>
+                    <button onclick="logoutStudent()" class="btn" style="background:#e74c3c;">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+                <p class="subtitle">Upload and track your documents</p>
+            </header>
+            
+            <div class="card">
+                <h2 class="section-title"><i class="fas fa-user-circle"></i> Personal Information</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="fullName">Full Name *</label>
+                        <input type="text" id="fullName" class="form-control" placeholder="Enter your full name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email Address *</label>
+                        <input type="email" id="email" class="form-control" placeholder="Enter your email" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="institution">Institution *</label>
+                        <select id="institution" class="form-control" required>
+                            <option value="">Select Institution</option>
+                            <option>Vellore Institute of Technology</option>
+                            <option>IIT Madras</option>
+                            <option>IIT Bombay</option>
+                            <option>Anna University</option>
+                            <option>Delhi University</option>
+                            <option>Jadavpur University</option>
+                            <option>Amrita Vishwa Vidyapeetham</option>
+                            <option>SRM Institute of Science and Technology</option>
+                            <option>Christ University</option>
+                            <option>Manipal Academy of Higher Education</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="documentType">Document Type *</label>
+                        <select id="documentType" class="form-control" required>
+                            <option value="">Select document type</option>
+                            <option value="degree">Degree Certificate</option>
+                            <option value="diploma">Diploma</option>
+                            <option value="transcript">Academic Transcript</option>
+                            <option value="license">Professional License</option>
+                            <option value="certificate">Training Certificate</option>
+                            <option value="other">Other Document</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="text-align:center;">
+                    <button class="btn student-btn" onclick="saveStudentDetails()">
+                        <i class="fas fa-save"></i> Save Details
+                    </button>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2 class="section-title"><i class="fas fa-file-upload"></i> Upload Document</h2>
+                <div class="drop-area" id="studentDrop" onclick="document.getElementById('studentFile').click()">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <p class="drop-text">Drag & Drop or Click to Upload</p>
+                    <input type="file" id="studentFile" class="file-input" accept=".jpg,.jpeg,.png,.pdf">
+                    <button type="button" class="browse-btn" onclick="event.stopPropagation(); document.getElementById('studentFile').click()">
+                        Browse Files
+                    </button>
+                    <div class="file-info" id="studentFileInfo">
+                        <p class="file-name"></p>
+                    </div>
+                </div>
+                <div style="text-align:center;">
+                    <button class="btn student-btn" onclick="uploadDocument()">
+                        <i class="fas fa-upload"></i> Upload Document
+                    </button>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2 class="section-title"><i class="fas fa-list"></i> My Documents Status</h2>
+                <table id="studentDocumentsTable">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Document Type</th>
+                            <th>File Name</th>
+                            <th>Status</th>
+                            <th>Uploaded</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ISSUER AUTH SELECTION -->
+        <div id="issuerAuthPage" style="display:none;">
+            <header>
+                <div class="header-actions">
+                    <button onclick="goBackToRoles()" class="btn back-btn"><i class="fas fa-arrow-left"></i> Back</button>
+                    <h1 style="margin:0;text-align: center;">Issuer Authentication</h1>
+                </div>
+                <p class="subtitle">Choose to register or sign in as issuer</p>
+            </header>
+            <div class="role-selection">
+                <div class="role-card" onclick="showIssuerRegister()">
+                    <div class="role-icon"><i class="fas fa-user-plus issuer-icon"></i></div>
+                    <h2 class="role-title">Register</h2>
+                    <p class="role-description">Create a new issuer account</p>
+                    <div class="btn issuer-btn">Register</div>
+                </div>
+                <div class="role-card" onclick="showIssuerLogin()">
+                    <div class="role-icon"><i class="fas fa-sign-in-alt issuer-icon"></i></div>
+                    <h2 class="role-title">Sign In</h2>
+                    <p class="role-description">Login to your issuer account</p>
+                    <div class="btn issuer-btn">Sign In</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ISSUER REGISTRATION -->
+        <div id="issuerRegisterPage" style="display:none;">
+            <header>
+                <div class="header-actions">
+                    <button onclick="goBackToIssuerAuth()" class="btn back-btn"><i class="fas fa-arrow-left"></i> Back</button>
+                    <h1 style="margin:0;text-align: center;">Issuer Registration</h1>
+                </div>
+                <p class="subtitle">Create your issuer account</p>
+            </header>
+            <div class="card">
+                <h2 class="section-title"><i class="fas fa-user-plus"></i> Registration Form</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="issuerRegUsername">Username *</label>
+                        <input type="text" id="issuerRegUsername" class="form-control" placeholder="Choose username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="issuerRegEmail">Email Address *</label>
+                        <input type="email" id="issuerRegEmail" class="form-control" placeholder="Enter email" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="issuerRegPassword">Password *</label>
+                        <input type="password" id="issuerRegPassword" class="form-control" placeholder="Create password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="issuerRegConfirmPassword">Confirm Password *</label>
+                        <input type="password" id="issuerRegConfirmPassword" class="form-control" placeholder="Confirm password" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="issuerRegInstitution">Institution *</label>
+                        <select id="issuerRegInstitution" class="form-control" required>
+                            <option value="">Select Institution</option>
+                            <option>Vellore Institute of Technology</option>
+                            <option>IIT Madras</option>
+                            <option>IIT Bombay</option>
+                            <option>Anna University</option>
+                            <option>Delhi University</option>
+                            <option>Jadavpur University</option>
+                            <option>Amrita Vishwa Vidyapeetham</option>
+                            <option>SRM Institute of Science and Technology</option>
+                            <option>Christ University</option>
+                            <option>Manipal Academy of Higher Education</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="text-align:center;">
+                    <button class="btn issuer-btn" onclick="registerIssuer()">
+                        <i class="fas fa-user-plus"></i> Create Account
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ISSUER LOGIN -->
+        <div id="issuerLoginPage" style="display:none;">
+            <header>
+                <div class="header-actions">
+                    <button onclick="goBackToIssuerAuth()" class="btn back-btn"><i class="fas fa-arrow-left"></i> Back</button>
+                    <h1 style="margin:0;text-align: center;">Issuer Login</h1>
+                </div>
+                <p class="subtitle">Sign in to your issuer account</p>
+            </header>
+            <div class="card">
+                <h2 class="section-title"><i class="fas fa-sign-in-alt"></i> Login Form</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="issuerLoginUsername">Username *</label>
+                        <input type="text" id="issuerLoginUsername" class="form-control" placeholder="Enter username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="issuerLoginPassword">Password *</label>
+                        <input type="password" id="issuerLoginPassword" class="form-control" placeholder="Enter password" required>
+                    </div>
+                </div>
+                <div style="text-align:center;">
+                    <button class="btn issuer-btn" onclick="loginIssuer()">
+                        <i class="fas fa-sign-in-alt"></i> Sign In
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ISSUER DASHBOARD -->
+        <div id="issuerDashboardPage" style="display:none;">
+            <header>
+                <div class="header-actions">
+                    <button onclick="goBackToRoles()" class="btn back-btn"><i class="fas fa-arrow-left"></i> Back</button>
+                    <h1 style="margin:0;text-align: center;">Issuer Dashboard</h1>
+                    <button onclick="logoutIssuer()" class="btn" style="background:#e74c3c;">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+                <p class="subtitle">Choose action: Issue or Verify documents</p>
+            </header>
+            <div class="role-selection">
+                <div class="role-card" onclick="showIssuerIssue()">
+                    <div class="role-icon"><i class="fas fa-file-signature issuer-icon"></i></div>
+                    <h2 class="role-title">Issue Document</h2>
+                    <p class="role-description">Issue new digital documents</p>
+                    <div class="btn issuer-btn">Issue Document</div>
+                </div>
+                <div class="role-card" onclick="showIssuerVerify()">
+                    <div class="role-icon"><i class="fas fa-check-double issuer-icon"></i></div>
+                    <h2 class="role-title">Verify Documents</h2>
+                    <p class="role-description">Review and validate pending documents</p>
+                    <div class="btn issuer-btn">Verify Documents</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ISSUER ISSUE PORTAL -->
+        <div id="issuerIssuePage" style="display:none;">
+            <header>
+                <div class="header-actions">
+                    <button onclick="goBackToIssuerDashboard()" class="btn back-btn"><i class="fas fa-arrow-left"></i> Back</button>
+                    <h1 style="margin:0;text-align: center;">Issue Document</h1>
+                    <button onclick="logoutIssuer()" class="btn" style="background:#e74c3c;">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+                <p class="subtitle">Issue and manage digital documents</p>
+            </header>
+            
+            <div class="card">
+                <h2 class="section-title"><i class="fas fa-user-shield"></i> Issuer Information</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="issuerName">Issuer Name *</label>
+                        <input type="text" id="issuerName" class="form-control" placeholder="Enter your full name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="issuerEmail">Issuer Email *</label>
+                        <input type="email" id="issuerEmail" class="form-control" placeholder="Enter your email" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="issuerInstitution">Institution *</label>
+                        <select id="issuerInstitution" class="form-control" required>
+                            <option value="">Select Institution</option>
+                            <option>Vellore Institute of Technology</option>
+                            <option>IIT Madras</option>
+                            <option>IIT Bombay</option>
+                            <option>Anna University</option>
+                            <option>Delhi University</option>
+                            <option>Jadavpur University</option>
+                            <option>Amrita Vishwa Vidyapeetham</option>
+                            <option>SRM Institute of Science and Technology</option>
+                            <option>Christ University</option>
+                            <option>Manipal Academy of Higher Education</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="issuerDocumentType">Document Type *</label>
+                        <select id="issuerDocumentType" class="form-control" required>
+                            <option value="">Select document type</option>
+                            <option value="degree">Degree Certificate</option>
+                            <option value="diploma">Diploma</option>
+                            <option value="transcript">Academic Transcript</option>
+                            <option value="license">Professional License</option>
+                            <option value="certificate">Training Certificate</option>
+                            <option value="other">Other Document</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2 class="section-title"><i class="fas fa-file-upload"></i> Upload Document</h2>
+                <div class="drop-area" id="issuerDrop" onclick="document.getElementById('issuerFile').click()">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <p class="drop-text">Drag & Drop or Click to Upload</p>
+                    <input type="file" id="issuerFile" class="file-input" accept=".jpg,.jpeg,.png,.pdf">
+                    <button type="button" class="browse-btn" onclick="event.stopPropagation(); document.getElementById('issuerFile').click()">
+                        Browse Files
+                    </button>
+                    <div class="file-info" id="issuerFileInfo">
+                        <p class="file-name"></p>
+                    </div>
+                </div>
+                <div style="text-align:center;">
+                    <button class="btn issuer-btn" onclick="issueDocument()">
+                        <i class="fas fa-file-signature"></i> Issue Document
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ISSUER VERIFY PORTAL -->
+        <div id="issuerVerifyPage" style="display:none;">
+            <header>
+                <div class="header-actions">
+                    <button onclick="goBackToIssuerDashboard()" class="btn back-btn"><i class="fas fa-arrow-left"></i> Back</button>
+                    <h1 style="margin:0;text-align: center;">Verify Documents</h1>
+                    <button onclick="logoutIssuer()" class="btn" style="background:#e74c3c;">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+                <p class="subtitle">Review and validate pending student documents</p>
+            </header>
+            
+            <div class="card">
+                <h2 class="section-title"><i class="fas fa-clock"></i> Pending Documents</h2>
+                <table id="pendingDocumentsTable">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Student</th>
+                            <th>Document Type</th>
+                            <th>File Name</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- VERIFIER PORTAL -->
+        <div id="verifierPage" style="display:none;">
+            <header>
+                <div class="header-actions">
+                    <button onclick="goBackToRoles()" class="btn back-btn"><i class="fas fa-arrow-left"></i> Back</button>
+                    <h1 style="margin:0;text-align: center;">Verifier Portal</h1>
+                </div>
+                <p class="subtitle">Validate document authenticity using AI</p>
+            </header>
+
+            <!-- NEW: Document Details Card -->
+            <div class="card">
+                <h2 class="section-title"><i class="fas fa-id-card"></i> Document Details</h2>
+                <p style="margin-bottom: 15px; color: #666;">Enter details to check against database records (Optional)</p>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="verifyDocId">Document ID</label>
+                        <input type="text" id="verifyDocId" class="form-control" placeholder="e.g. 661a7b23c9e..." />
+                    </div>
+                    <div class="form-group">
+                        <label for="verifyHolderName">Holder Name</label>
+                        <input type="text" id="verifyHolderName" class="form-control" placeholder="Name on document" />
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2 class="section-title"><i class="fas fa-search"></i> Upload Document for Verification</h2>
+                <div class="drop-area" id="verifierDrop" onclick="document.getElementById('verifierFile').click()">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <p class="drop-text">Drag & Drop or Click to Upload</p>
+                    <input type="file" id="verifierFile" class="file-input" accept=".jpg,.jpeg,.png,.pdf">
+                    <button type="button" class="browse-btn" onclick="event.stopPropagation(); document.getElementById('verifierFile').click()">
+                        Browse Files
+                    </button>
+                    <div class="file-info" id="verifierFileInfo">
+                        <p class="file-name"></p>
+                    </div>
+                </div>
+                
+                <div style="text-align:center; margin:25px 0;">
+                    <button class="btn verifier-btn" onclick="previewVerifierFile()">
+                        <i class="fas fa-eye"></i> Preview Document
+                    </button>
+                    <button class="btn verifier-btn" onclick="verifyDocument()" style="margin-left:15px;">
+                        <i class="fas fa-check-circle"></i> Verify Document
+                    </button>
+                </div>
+                
+                <div id="verifierPreview" class="preview-container" style="display:none;">
+                    <!-- Preview will appear here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- QR Verification Page -->
+        <div id="qrVerificationPage" style="display:none;">
+            <header>
+                <div class="header-actions">
+                    <button onclick="goBackToRoles()" class="btn back-btn"><i class="fas fa-arrow-left"></i> Back</button>
+                    <h1 style="margin:0;">Document Verification</h1>
+                </div>
+            </header>
+            <div class="card" id="qrVerificationResult">
+                <!-- Verification result will be displayed here -->
+            </div>
+        </div>
+
+        <footer>
+            <p>TrustDocs - Secure Document Verification System © 2025</p>
+        </footer>
+    </div>
+
+    <script>
+        // ==================== UTILITY FUNCTIONS ====================
+        function debugLog(message) {
+            console.log(`[TrustDocs] ${message}`);
+        }
+
+        function showPopup(message) {
+          document.getElementById("popupText").innerText = message;
+            document.getElementById("popupOverlay").style.display = "flex";
+        }
+
+        function closePopup() {
+            document.getElementById("popupOverlay").style.display = "none";
+        }
+
+        function hideAllPages() {
+            const pages = [
+                "rolePage", "studentAuthPage", "studentRegisterPage", "studentLoginPage", "studentPage",
+                "issuerAuthPage", "issuerRegisterPage", "issuerLoginPage", "issuerDashboardPage",
+                "issuerIssuePage", "issuerVerifyPage", "verifierPage", "qrVerificationPage"
+            ];
+            pages.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) element.style.display = "none";
+            });
+        }
+
+        // ==================== NAVIGATION FUNCTIONS ====================
+        function goBackToRoles() {
+            hideAllPages();
+            document.getElementById("rolePage").style.display = "block";
+        }
+
+        function goBackToAuth() {
+            hideAllPages();
+            document.getElementById("studentAuthPage").style.display = "block";
+        }
+
+        function goBackToIssuerAuth() {
+            hideAllPages();
+            document.getElementById("issuerAuthPage").style.display = "block";
+        }
+
+        function goBackToIssuerDashboard() {
+            hideAllPages();
+            document.getElementById("issuerDashboardPage").style.display = "block";
+        }
+
+        function showStudentAuth() {
+            hideAllPages();
+            document.getElementById("studentAuthPage").style.display = "block";
+        }
+
+        function showStudentRegister() {
+            hideAllPages();
+            document.getElementById("studentRegisterPage").style.display = "block";
+        }
+
+        function showStudentLogin() {
+            hideAllPages();
+            document.getElementById("studentLoginPage").style.display = "block";
+        }
+
+        function showStudentForm() {
+            hideAllPages();
+            document.getElementById("studentPage").style.display = "block";
+            loadStudentDocuments();
+        }
+
+        function showIssuerAuth() {
+            hideAllPages();
+            document.getElementById("issuerAuthPage").style.display = "block";
+        }
+
+        function showIssuerRegister() {
+            hideAllPages();
+            document.getElementById("issuerRegisterPage").style.display = "block";
+        }
+
+        function showIssuerLogin() {
+            hideAllPages();
+            document.getElementById("issuerLoginPage").style.display = "block";
+        }
+
+        function showIssuerDashboard() {
+            hideAllPages();
+            document.getElementById("issuerDashboardPage").style.display = "block";
+        }
+
+        function showIssuerIssue() {
+            hideAllPages();
+            document.getElementById("issuerIssuePage").style.display = "block";
+        }
+
+        function showIssuerVerify() {
+            hideAllPages();
+            document.getElementById("issuerVerifyPage").style.display = "block";
+            loadPendingDocuments();
+        }
+
+        function showVerifierForm() {
+            hideAllPages();
+            document.getElementById("verifierPage").style.display = "block";
+        }
+
+        function showQRVerification(data) {
+            hideAllPages();
+            document.getElementById("qrVerificationPage").style.display = "block";
+            
+            const resultDiv = document.getElementById("qrVerificationResult");
+            
+            if (data.verified) {
+                resultDiv.innerHTML = `
+                    <div style="text-align:center;">
+                        <div class="verification-badge">
+                            <i class="fas fa-check-circle"></i> TRUSTDOCS VERIFIED
+                        </div>
+                        <h2>Document Verified Successfully!</h2>
+                        ${data.hasEmbeddedQR ? '<p><span class="embedded-badge">QR Embedded in Document</span></p>' : ''}
+                        <div style="background:#f0f9ff; padding:20px; border-radius:10px; margin:20px 0; text-align:left;">
+                            <p><strong>Document:</strong> ${data.documentName || 'N/A'}</p>
+                            <p><strong>Student:</strong> ${data.studentName || 'N/A'}</p>
+                            <p><strong>Institution:</strong> ${data.institution || 'N/A'}</p>
+                            <p><strong>Document Type:</strong> ${data.documentType || 'N/A'}</p>
+                            <p><strong>Verified By:</strong> ${data.verifiedBy || 'N/A'}</p>
+                            <p><strong>Verified At:</strong> ${data.verifiedAt || 'N/A'}</p>
+                            <p><strong>AI Score:</strong> ${data.aiScore || 'N/A'}%</p>
+                        </div>
+                        <p style="color:#2ecc71; font-weight:bold;">${data.message}</p>
+                    </div>
+                `;
+            } else {
+                resultDiv.innerHTML = `
+                    <div style="text-align:center;">
+                        <div style="background:#e74c3c; color:white; padding:10px 20px; border-radius:30px; display:inline-block; font-weight:bold;">
+                            <i class="fas fa-times-circle"></i> VERIFICATION FAILED
+                        </div>
+                        <h2>Document Could Not Be Verified</h2>
+                        <div style="background:#fff5f5; padding:20px; border-radius:10px; margin:20px 0;">
+                            <p style="color:#e74c3c;">${data.message || 'This document has not been verified by TrustDocs'}</p>
+                            ${data.status ? `<p>Status: ${data.status}</p>` : ''}
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // ==================== LOGOUT FUNCTIONS ====================
+        function logoutStudent() {
+            localStorage.removeItem('currentStudent');
+            showPopup("Logged out successfully!");
+            setTimeout(goBackToRoles, 1000);
+        }
+
+        function logoutIssuer() {
+            localStorage.removeItem('currentIssuer');
+            showPopup("Logged out successfully!");
+            setTimeout(goBackToRoles, 1000);
+        }
+
+        // ==================== FILE INPUT HANDLING ====================
+        function setupFileInput(inputId, infoId) {
+            const fileInput = document.getElementById(inputId);
+            const fileInfo = document.getElementById(infoId);
+            
+            if (fileInput && fileInfo) {
+                fileInput.addEventListener("change", () => {
+                    if (fileInput.files.length > 0) {
+                        fileInfo.style.display = "block";
+                        fileInfo.querySelector(".file-name").textContent = "Selected: " + fileInput.files[0].name;
+                    } else {
+                        fileInfo.style.display = "none";
+                    }
+                });
+            }
+        }
+
+        setupFileInput("studentFile", "studentFileInfo");
+        setupFileInput("issuerFile", "issuerFileInfo");
+        setupFileInput("verifierFile", "verifierFileInfo");
+
+        // ==================== STUDENT REGISTRATION ====================
+        async function registerStudent() {
+            const username = document.getElementById("regUsername").value.trim();
+            const email = document.getElementById("regEmail").value.trim();
+            const password = document.getElementById("regPassword").value;
+            const confirmPassword = document.getElementById("regConfirmPassword").value;
+
+            if (!username || !email || !password || !confirmPassword) {
+                showPopup("Please fill all fields.");
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                showPopup("Passwords do not match.");
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:5000/api/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        username,
+                        email,
+                        password,
+                        role: 'student'
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showPopup("Registration successful! Please login.");
+                    setTimeout(showStudentLogin, 1500);
+                } else {
+                    showPopup(result.message || "Registration failed.");
+                }
+            } catch (error) {
+                console.error("Registration error:", error);
+                showPopup("Cannot connect to server. Make sure backend is running on port 5000.");
+            }
+        }
+
+        // ==================== STUDENT LOGIN ====================
+        async function loginStudent() {
+            const username = document.getElementById("loginUsername").value.trim();
+            const password = document.getElementById("loginPassword").value;
+
+            if (!username || !password) {
+                showPopup("Please enter username and password.");
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:5000/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    localStorage.setItem('currentStudent', username);
+                    showPopup("Login successful!");
+                    setTimeout(() => {
+                        showStudentForm();
+                    }, 1000);
+                } else {
+                    showPopup(result.message || "Invalid username or password.");
+                }
+            } catch (error) {
+                console.error("Login error:", error);
+                showPopup("Cannot connect to server. Make sure backend is running on port 5000.");
+            }
+        }
+
+        // ==================== ISSUER REGISTRATION ====================
+        async function registerIssuer() {
+            const username = document.getElementById("issuerRegUsername").value.trim();
+            const email = document.getElementById("issuerRegEmail").value.trim();
+            const password = document.getElementById("issuerRegPassword").value;
+            const confirmPassword = document.getElementById("issuerRegConfirmPassword").value;
+            const institution = document.getElementById("issuerRegInstitution").value;
+
+            if (!username || !email || !password || !confirmPassword || !institution) {
+                showPopup("Please fill all fields.");
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                showPopup("Passwords do not match.");
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:5000/api/register-issuer', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, email, password, institution })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showPopup("Issuer registration successful! Please login.");
+                    setTimeout(showIssuerLogin, 1500);
+                } else {
+                    showPopup(result.message || "Registration failed.");
+                }
+            } catch (error) {
+                console.error("Issuer registration error:", error);
+                showPopup("Cannot connect to server.");
+            }
+        }
+
+        // ==================== ISSUER LOGIN ====================
+        async function loginIssuer() {
+            const username = document.getElementById("issuerLoginUsername").value.trim();
+            const password = document.getElementById("issuerLoginPassword").value;
+
+            if (!username || !password) {
+                showPopup("Please enter username and password.");
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:5000/api/login-issuer', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    localStorage.setItem('currentIssuer', JSON.stringify({
+                        username: result.user.username,
+                        institution: result.user.institution
+                    }));
+                    showPopup("Login successful!");
+                    setTimeout(showIssuerDashboard, 1000);
+                } else {
+                    showPopup(result.message || "Invalid username or password.");
+                }
+            } catch (error) {
+                console.error("Issuer login error:", error);
+                showPopup("Cannot connect to server.");
+            }
+        }
+
+        // ==================== SAVE STUDENT DETAILS ====================
+        async function saveStudentDetails() {
+            const username = localStorage.getItem('currentStudent');
+            if (!username) {
+                showPopup("Please login first.");
+                return;
+            }
+
+            const fullName = document.getElementById("fullName").value.trim();
+            const email = document.getElementById("email").value.trim();
+            const institution = document.getElementById("institution").value;
+
+            if (!fullName || !email || !institution) {
+                showPopup("Please fill all personal details.");
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:5000/api/update-student-details', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, fullName, email, institution })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showPopup("Details saved successfully!");
+                } else {
+                    showPopup(result.message || "Failed to save details.");
+                }
+            } catch (error) {
+                console.error("Save details error:", error);
+                showPopup("Cannot connect to server.");
+            }
+        }
+
+        // ==================== UPLOAD DOCUMENT ====================
+        async function uploadDocument() {
+            const username = localStorage.getItem('currentStudent');
+            if (!username) {
+                showPopup("Please login first.");
+                return;
+            }
+
+            const fullName = document.getElementById("fullName").value.trim();
+            const email = document.getElementById("email").value.trim();
+            const institution = document.getElementById("institution").value;
+            const documentType = document.getElementById("documentType").value;
+            const fileInput = document.getElementById("studentFile");
+
+            if (!fullName || !email || !institution || !documentType || !fileInput.files[0]) {
+                showPopup("Please fill all fields and select a file.");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('username', username);
+            formData.append('fullName', fullName);
+            formData.append('email', email);
+            formData.append('institution', institution);
+            formData.append('documentType', documentType);
+            formData.append('file', fileInput.files[0]);
+
+            try {
+                const response = await fetch('http://localhost:5000/api/upload-document', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showPopup("Document uploaded successfully!");
+                    fileInput.value = '';
+                    document.getElementById("studentFileInfo").style.display = "none";
+                    loadStudentDocuments();
+                } else {
+                    showPopup(result.message || "Upload failed.");
+                }
+            } catch (error) {
+                console.error("Upload error:", error);
+                showPopup("Cannot connect to server.");
+            }
+        }
+
+        // ==================== ISSUE DOCUMENT ====================
+        async function issueDocument() {
+            const issuerName = document.getElementById("issuerName").value.trim();
+            const issuerEmail = document.getElementById("issuerEmail").value.trim();
+            const issuerInstitution = document.getElementById("issuerInstitution").value;
+            const issuerDocumentType = document.getElementById("issuerDocumentType").value;
+            const fileInput = document.getElementById("issuerFile");
+
+            if (!issuerName || !issuerEmail || !issuerInstitution || !issuerDocumentType || !fileInput.files[0]) {
+                showPopup("Please fill all fields and select a file.");
+                return;
+            }
+
+            const currentIssuer = JSON.parse(localStorage.getItem('currentIssuer'));
+            if (!currentIssuer || !currentIssuer.username) {
+                showPopup("Please login as issuer first.");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('issuerName', issuerName);
+            formData.append('issuerEmail', issuerEmail);
+            formData.append('issuerInstitution', issuerInstitution);
+            formData.append('issuerDocumentType', issuerDocumentType);
+            formData.append('issuerUsername', currentIssuer.username);
+            formData.append('file', fileInput.files[0]);
+
+            try {
+                const response = await fetch('http://localhost:5000/api/issue-document', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showPopup("Document issued successfully!");
+                    fileInput.value = '';
+                    document.getElementById("issuerFileInfo").style.display = "none";
+                } else {
+                    showPopup(result.message || "Failed to issue document.");
+                }
+            } catch (error) {
+                console.error("Issue error:", error);
+                showPopup("Cannot connect to server.");
+            }
+        }
+
+        // ==================== LOAD STUDENT DOCUMENTS ====================
+        async function loadStudentDocuments() {
+            const username = localStorage.getItem('currentStudent');
+            if (!username) return;
+
+            try {
+                const response = await fetch(`http://localhost:5000/api/student-documents?username=${encodeURIComponent(username)}`);
+                const result = await response.json();
+
+                const tbody = document.querySelector("#studentDocumentsTable tbody");
+                tbody.innerHTML = '';
+
+                if (result.documents && result.documents.length > 0) {
+                    result.documents.forEach((doc, index) => {
+                        const row = tbody.insertRow();
+                        row.innerHTML = `
+                            <td>${index + 1}</td>
+                            <td>${doc.documentType}</td>
+                            <td>${doc.documentName} ${doc.hasEmbeddedQR ? '<span class="embedded-badge">QR</span>' : ''}</td>
+                            <td><span class="status-badge status-${doc.status.toLowerCase()}">${doc.status}</span></td>
+                            <td>${doc.uploadedAt || 'N/A'}</td>
+                            <td>
+                                <button class="action-btn view-btn" onclick="viewDocument('${doc._id}')">
+                                    <i class="fas fa-eye"></i> View
+                                </button>
+                                ${doc.status.toLowerCase() === 'valid' ? 
+                                    `<button class="action-btn qr-btn" onclick="showQRCode('${doc._id}')">
+                                        <i class="fas fa-qrcode"></i> QR
+                                    </button>` : ''
+                                }
+                            </td>
+                        `;
+                    });
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">No documents uploaded yet.</td></tr>';
+                }
+            } catch (error) {
+                console.error("Load documents error:", error);
+            }
+        }
+
+        // ==================== LOAD PENDING DOCUMENTS ====================
+        async function loadPendingDocuments() {
+            const currentIssuer = JSON.parse(localStorage.getItem('currentIssuer'));
+            if (!currentIssuer || !currentIssuer.institution) {
+                showPopup("Please login as issuer first.");
+                return;
+            }
+
+            try {
+                const response = await fetch(`http://localhost:5000/api/pending-documents?institution=${encodeURIComponent(currentIssuer.institution)}`);
+                const result = await response.json();
+
+                const tbody = document.querySelector("#pendingDocumentsTable tbody");
+                tbody.innerHTML = '';
+
+                if (result.documents && result.documents.length > 0) {
+                    result.documents.forEach((doc, index) => {
+                        const row = tbody.insertRow();
+                        row.innerHTML = `
+                            <td>${index + 1}</td>
+                            <td>${doc.fullName || doc.studentUsername}</td>
+                            <td>${doc.documentType}</td>
+                            <td>${doc.documentName}</td>
+                            <td>
+                                <button class="action-btn view-btn" onclick="viewDocument('${doc._id}')">
+                                    <i class="fas fa-eye"></i> View
+                                </button>
+                                <button class="action-btn analyze-btn" onclick="showAIAnalysis('${doc._id}')">
+                                    <i class="fas fa-microchip"></i> AI Analyze
+                                </button>
+                                <button class="action-btn valid-btn" onclick="updateDocumentStatus('${doc._id}', 'valid')">
+                                    <i class="fas fa-check"></i> Valid
+                                </button>
+                                <button class="action-btn invalid-btn" onclick="updateDocumentStatus('${doc._id}', 'invalid')">
+                                    <i class="fas fa-times"></i> Invalid
+                                </button>
+                            </td>
+                        `;
+                    });
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">No pending documents to verify.</td></tr>';
+                }
+            } catch (error) {
+                console.error("Load pending documents error:", error);
+            }
+        }
+
+        // ==================== VIEW DOCUMENT (FIXED) ====================
+        function previewDocument(fileData, mimeType, fileName) {
+            const dataUrl = `data:${mimeType};base64,${fileData}`;
+            
+            const modal = document.createElement('div');
+            modal.className = 'document-modal';
+            
+            const content = document.createElement('div');
+            content.className = 'modal-content';
+            
+            const closeBtn = document.createElement('button');
+            closeBtn.className = 'modal-close';
+            closeBtn.innerHTML = '✕ Close';
+            closeBtn.onclick = () => document.body.removeChild(modal);
+            
+            const downloadBtn = document.createElement('button');
+            downloadBtn.style.cssText = 'position: absolute; top: 10px; right: 100px; padding: 8px 20px; background: #3498db; color: white; border: none; border-radius: 5px; cursor: pointer;';
+            downloadBtn.innerHTML = '<i class="fas fa-download"></i> Download';
+            downloadBtn.onclick = () => {
+                const link = document.createElement('a');
+                link.href = dataUrl;
+                link.download = fileName;
+                link.click();
+            };
+            
+            let previewElement;
+            if (mimeType.startsWith('image/')) {
+                previewElement = document.createElement('img');
+                previewElement.src = dataUrl;
+                previewElement.className = 'modal-image';
+            } else if (mimeType === 'application/pdf') {
+                previewElement = document.createElement('iframe');
+                previewElement.src = dataUrl;
+                previewElement.style.width = '100%';
+                previewElement.style.height = '80vh';
+                previewElement.style.border = 'none';
+            } else {
+                previewElement = document.createElement('div');
+                previewElement.innerHTML = `
+                    <p>Cannot preview this file type.</p>
+                    <button class="btn" onclick="window.open('${dataUrl}', '_blank')">Open in New Tab</button>
+                `;
+            }
+            
+            content.appendChild(closeBtn);
+            content.appendChild(downloadBtn);
+            content.appendChild(previewElement);
+            modal.appendChild(content);
+            document.body.appendChild(modal);
+        }
+
+        async function viewDocument(docId) {
+            console.log("Viewing document:", docId);
+
+            if (!docId) {
+                alert("No document ID provided");
+                return;
+            }
+
+            try {
+                const response = await fetch(`http://localhost:5000/api/get-document?documentId=${docId}`);
+                
+                if (!response.ok) {
+                    const err = await response.json();
+                    alert(err.message || "Error fetching document");
+                    return;
+                }
+
+                const result = await response.json();
+
+                if (!result.document || !result.document.fileData) {
+                    alert("Document data not found");
+                    return;
+                }
+
+                const fileData = result.document.fileData;
+                const mimeType = result.document.fileMetadata?.mimeType || 'application/octet-stream';
+                const fileName = result.document.documentName || 'document';
+
+                previewDocument(fileData, mimeType, fileName);
+
+            } catch (error) {
+                console.error("Error viewing document:", error);
+                alert("Error: " + error.message);
+            }
+        }
+
+        // ==================== SHOW QR CODE ====================
+        async function showQRCode(docId) {
+            console.log("showQRCode called with ID:", docId);
+            
+            if (!docId) {
+                alert("No document ID provided");
+                return;
+            }
+
+            try {
+                await fetch(`http://localhost:5000/api/generate-qr/${docId}`, {
+                    method: 'POST'
+                });
+                
+                const response = await fetch(`http://localhost:5000/api/get-document?documentId=${docId}`);
+                const result = await response.json();
+                
+                if (!response.ok) {
+                    alert(result.message || "Error fetching document");
+                    return;
+                }
+                
+                if (!result.document) {
+                    alert("Document not found");
+                    return;
+                }
+                
+                const doc = result.document;
+                
+                if (!doc.qrCode) {
+                    alert("QR code not available for this document");
+                    return;
+                }
+
+                const modalHTML = `
+                    <div id="qr-modal" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:10000; display:flex; justify-content:center; align-items:center; flex-direction:column;">
+                        <div style="background:white; padding:30px; border-radius:15px; max-width:500px; width:90%; position:relative; box-shadow:0 10px 30px rgba(0,0,0,0.3); text-align:center;">
+                            <button onclick="document.getElementById('qr-modal').remove()" style="position:absolute; top:10px; right:10px; padding:8px 20px; background:#e74c3c; color:white; border:none; border-radius:5px; cursor:pointer; font-weight:bold;">✕ Close</button>
+                            <h2 style="color:#2c3e50; margin-bottom:20px;">Document Verification QR Code</h2>
+                            <img src="data:image/png;base64,${doc.qrCode}" style="max-width:300px; margin:20px auto; border:2px solid #667eea; border-radius:10px; padding:10px; display:block;">
+                            <p><strong>Document:</strong> ${doc.documentName || 'N/A'}</p>
+                            <p><strong>Status:</strong> <span style="color:#2ecc71;">VERIFIED</span></p>
+                            <p><strong>Verification URL:</strong><br><small>${doc.verificationUrl || 'N/A'}</small></p>
+                            <button onclick="window.open('${doc.verificationUrl}', '_blank')" style="margin-top:15px; padding:10px 25px; background:linear-gradient(135deg, #667eea, #764ba2); color:white; border:none; border-radius:10px; cursor:pointer; font-size:1rem;">Test Verification</button>
+                        </div>
+                    </div>
+                `;
+                
+                const existingModal = document.getElementById('qr-modal');
+                if (existingModal) {
+                    existingModal.remove();
+                }
+                
+                document.body.insertAdjacentHTML('beforeend', modalHTML);
+                
+            } catch (error) {
+                console.error("QR code error:", error);
+                alert("Error showing QR code: " + error.message);
+            }
+        }
+
+        // ==================== UPDATE DOCUMENT STATUS ====================
+        async function updateDocumentStatus(docId, status) {
+            const currentIssuer = JSON.parse(localStorage.getItem('currentIssuer'));
+            if (!currentIssuer || !currentIssuer.username) {
+                showPopup("Please login as issuer.");
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:5000/api/update-document-status', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        documentId: docId,
+                        status: status,
+                        issuerUsername: currentIssuer.username
+                    })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showPopup(`Document marked as ${status.toUpperCase()}! ${result.aiScore ? `\nAI Score: ${result.aiScore}%` : ''}`);
+                    loadPendingDocuments();
+                } else {
+                    showPopup(result.message || "Failed to update status.");
+                }
+            } catch (error) {
+                console.error("Update status error:", error);
+                showPopup("Cannot connect to server.");
+            }
+        }
+
+        // ==================== VERIFY DOCUMENT (UPDATED) ====================
+// ==================== VERIFY DOCUMENT (FIXED) ====================
+async function verifyDocument() {
+   console.log("Button clicked");
+
+    const fileInput = document.getElementById("verifierFile");
+    const docIdInput = document.getElementById("verifyDocId").value.trim();
+    const holderName = document.getElementById("verifyHolderName").value.trim();
+
+    // Check file
+    if (!fileInput.files || !fileInput.files[0]) {
+        showPopup("Please select a file first.");
+        return;
+    }
+
+    // Prepare form data
+    const formData = new FormData();
+    formData.append("file", fileInput.files[0]);
+    formData.append("documentId", docIdInput);
+    formData.append("holderName", holderName);
+
+    try {
+        console.log("Sending request...");
+
+        const response = await fetch('http://localhost:5000/api/verify-document', {
+            method: 'POST',
+            body: formData
+        });
+
+        const result = await response.json();
+        console.log("Result:", result);
+
+        if (response.ok) {
+            // 1. Prepare the status message
+            const dbStatus = result.db_check ? "✅ Found in DB" : "❌ Not in DB";
+            const aiStatus = result.result || "Unknown";
+
+            // 2. Show the popup alert
+            const message = 
+                "Database Check: " + dbStatus + "\n\n" +
+                "AI Result: " + aiStatus + "\n" +
+                "AI Score: " + (result.score || 0) + "%\n\n" +
+                "Details:\n" + (result.details || "No additional details");
+
+            showPopup(message);
+
+            // 3. Update the result section on the page (Optional)
+            // If you have a div with id="verifyResult", it will update. If not, it skips this.
+            const resultDiv = document.getElementById("verifyResult");
+            if (resultDiv) {
+                resultDiv.innerHTML = `
+                    <h3>Verification Result</h3>
+                    <p><strong>Status:</strong> ${result.result}</p>
+                    <p><strong>Score:</strong> ${result.score}%</p>
+                    <p><strong>Database:</strong> ${result.db_check ? "✅ Found" : "❌ Not Found"}</p>
+                    <p><strong>Details:</strong> ${result.details || 'N/A'}</p>
+                `;
+            }
+
+        } else {
+            showPopup(result.message || "Verification failed");
+        }
+
+    } catch (error) {
+        console.error("Verify error:", error);
+        showPopup("Cannot connect to server.");
+    }
+}
+
+        // ==================== PREVIEW FILE ====================
+        function previewVerifierFile() {
+            const fileInput = document.getElementById('verifierFile');
+            const previewDiv = document.getElementById('verifierPreview');
+
+            if (!fileInput.files || fileInput.files.length === 0) {
+                showPopup("Please select a file first.");
+                return;
+            }
+
+            previewDiv.innerHTML = '';
+            previewDiv.style.display = 'block';
+
+            const file = fileInput.files[0];
+            const fileType = file.type;
+
+            if (fileType.startsWith('image/')) {
+                const img = document.createElement('img');
+                img.src = URL.createObjectURL(file);
+                img.style.maxWidth = '100%';
+                img.style.maxHeight = '500px';
+                previewDiv.appendChild(img);
+            } else if (fileType === 'application/pdf') {
+                const iframe = document.createElement('iframe');
+                iframe.src = URL.createObjectURL(file);
+                iframe.style.width = '100%';
+                iframe.style.height = '500px';
+                iframe.style.border = 'none';
+                previewDiv.appendChild(iframe);
+            } else {
+                previewDiv.innerHTML = '<p style="color:#e74c3c;">Preview not available for this file type.</p>';
+            }
+        }
+
+        // ==================== CHECK FOR QR VERIFICATION PARAMETERS ====================
+        function checkQRVerification() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const docId = urlParams.get('verify');
+            
+            if (docId) {
+                fetch(`http://localhost:5000/api/verify-document-qr/${docId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        showQRVerification(data);
+                    })
+                    .catch(error => {
+                        console.error("QR verification error:", error);
+                        showQRVerification({ verified: false, message: "Error connecting to server" });
+                    });
+            }
+        }
+
+        // ==================== INITIAL SETUP ====================
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log("TrustDocs Frontend Loaded");
+            checkQRVerification();
+            fetch('http://localhost:5000/api/test')
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Backend connection successful:", data);
+                })
+                .catch(error => {
+                    console.error("Backend connection failed:", error);
+                    showPopup("⚠️ Warning: Cannot connect to backend. Make sure Flask server is running on port 5000.");
+                });
+        });
+
+        // ==================== SHOW AI ANALYSIS ====================
+        async function showAIAnalysis(docId) {
+            try {
+                showPopup("🔍 Running AI analysis... Please wait.");
+                
+                const response = await fetch(`http://localhost:5000/api/analyze-document/${docId}`);
+                const result = await response.json();
+                
+                if (!response.ok) {
+                    alert("Error: " + result.message);
+                    return;
+                }
+                
+                const analysis = result.analysis;
+                const tampering = analysis.tampering_detection || {};
+                
+                const modalHTML = `
+                    <div id="analysis-modal" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:10000; display:flex; justify-content:center; align-items:center; flex-direction:column;">
+                        <div style="background:white; padding:20px; border-radius:15px; max-width:1000px; width:95%; max-height:90vh; overflow:auto; position:relative;">
+                            
+                            <button onclick="document.getElementById('analysis-modal').remove()" style="position:absolute; top:10px; right:10px; padding:8px 20px; background:#e74c3c; color:white; border:none; border-radius:5px; cursor:pointer; font-weight:bold;">✕ Close</button>
+                            
+                            <h2 style="color:#2c3e50; margin-bottom:15px;">🔍 AI Tampering Analysis</h2>
+                            <p><strong>Document:</strong> ${result.document_name}</p>
+                            
+                            <div style="background:${analysis.overall_score >= 80 ? '#d4edda' : analysis.overall_score >= 60 ? '#fff3cd' : '#f8d7da'}; padding:15px; border-radius:10px; margin:15px 0; text-align:center;">
+                                <h3 style="margin:0; color:${analysis.overall_score >= 80 ? '#155724' : analysis.overall_score >= 60 ? '#856404' : '#721c24'}">
+                                    Overall Authenticity Score: ${analysis.overall_score}%
+                                </h3>
+                                <p>${tampering.has_tampering ? '⚠️ Tampering Detected' : '✅ No Tampering Found'} (${tampering.tampering_count || 0} regions)</p>
+                            </div>
+                            
+                            <div style="display:flex; gap:10px; margin-bottom:20px; border-bottom:2px solid #eee; padding-bottom:10px; flex-wrap:wrap;">
+                                <button onclick="switchAnalysisTab('overview')" id="tab-overview" style="padding:8px 20px; background:#667eea; color:white; border:none; border-radius:5px; cursor:pointer;">Overview</button>
+                                <button onclick="switchAnalysisTab('marked')" id="tab-marked" style="padding:8px 20px; background:#95a5a6; color:white; border:none; border-radius:5px; cursor:pointer;">Marked Image</button>
+                                <button onclick="switchAnalysisTab('heatmap')" id="tab-heatmap" style="padding:8px 20px; background:#95a5a6; color:white; border:none; border-radius:5px; cursor:pointer;">Heatmap</button>
+                                <button onclick="switchAnalysisTab('regions')" id="tab-regions" style="padding:8px 20px; background:#95a5a6; color:white; border:none; border-radius:5px; cursor:pointer;">Detected Regions</button>
+                                <button onclick="switchAnalysisTab('scores')" id="tab-scores" style="padding:8px 20px; background:#95a5a6; color:white; border:none; border-radius:5px; cursor:pointer;">Detailed Scores</button>
+                            </div>
+                            
+                            <div id="tab-overview-content">
+                                <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
+                                    <div style="background:#f8f9fa; padding:15px; border-radius:10px;">
+                                        <h4>📍 Local Tampering</h4>
+                                        <p>Score: ${analysis.localization_tampering.score}%</p>
+                                        <p><small>${analysis.localization_tampering.details}</small></p>
+                                    </div>
+                                    
+                                    <div style="background:#f8f9fa; padding:15px; border-radius:10px;">
+                                        <h4>🌍 Global Tampering</h4>
+                                        <p>Score: ${analysis.global_tampering.score}%</p>
+                                        <p><small>${analysis.global_tampering.details}</small></p>
+                                    </div>
+                                    
+                                    <div style="background:#f8f9fa; padding:15px; border-radius:10px;">
+                                        <h4>🤖 AI Generated</h4>
+                                        <p>Score: ${analysis.ai_generated.score}%</p>
+                                        <p>${analysis.ai_generated.is_ai_generated ? '⚠️ AI GENERATED' : '✅ Likely Real'}</p>
+                                        <p><small>${analysis.ai_generated.details}</small></p>
+                                    </div>
+                                    
+                                    <div style="background:#f8f9fa; padding:15px; border-radius:10px;">
+                                        <h4>📋 Metadata</h4>
+                                        <p>Score: ${analysis.metadata.score}%</p>
+                                        <p><small>${analysis.metadata.details}</small></p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div id="tab-marked-content" style="display:none; text-align:center;">
+                                <h3>📸 Image with Marked Tampered Regions</h3>
+                                ${tampering.marked_image ? 
+                                    `<img src="data:image/png;base64,${tampering.marked_image}" style="max-width:100%; max-height:500px; border:2px solid #ddd; border-radius:10px; margin:10px 0;">` 
+                                    : '<p>No marked image available</p>'
+                                }
+                            </div>
+                            
+                            <div id="tab-heatmap-content" style="display:none; text-align:center;">
+                                <h3>🔥 Tampering Probability Heatmap</h3>
+                                ${tampering.heatmap_image ? 
+                                    `<img src="data:image/png;base64,${tampering.heatmap_image}" style="max-width:100%; max-height:500px; border:2px solid #ddd; border-radius:10px; margin:10px 0;">`
+                                    : '<p>No heatmap available</p>'
+                                }
+                                <p>Red areas show high probability of tampering</p>
+                            </div>
+                            
+                            <div id="tab-regions-content" style="display:none;">
+                                <h3>📍 Detected Tampered Regions</h3>
+                                ${tampering.tampered_regions && tampering.tampered_regions.length > 0 ? 
+                                    tampering.tampered_regions.map((region, index) => `
+                                        <div style="background:#f8f9fa; padding:15px; margin:10px 0; border-radius:8px; border-left:5px solid #e74c3c;">
+                                            <h4>Region ${index + 1}: ${region.type}</h4>
+                                            <p><strong>Location:</strong> (${region.bbox[0]}, ${region.bbox[1]}) to (${region.bbox[2]}, ${region.bbox[3]})</p>
+                                            <p><strong>Size:</strong> ${region.bbox[2]-region.bbox[0]} x ${region.bbox[3]-region.bbox[1]} pixels</p>
+                                            <p><strong>Confidence:</strong> ${Math.round(region.confidence * 100)}%</p>
+                                            <p><strong>Description:</strong> ${region.description}</p>
+                                        </div>
+                                    `).join('') 
+                                    : '<p>No tampered regions detected</p>'
+                                }
+                            </div>
+                            
+                            <div id="tab-scores-content" style="display:none;">
+                                <h3>📊 Detailed Analysis Scores</h3>
+                                <div style="background:#f8f9fa; padding:20px; border-radius:10px;">
+                                    <table style="width:100%; border-collapse:collapse;">
+                                        <tr>
+                                            <td style="padding:10px; border-bottom:1px solid #ddd;"><strong>Overall Score:</strong></td>
+                                            <td style="padding:10px; border-bottom:1px solid #ddd;">${analysis.overall_score}%</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="padding:10px; border-bottom:1px solid #ddd;"><strong>Local Tampering:</strong></td>
+                                            <td style="padding:10px; border-bottom:1px solid #ddd;">${analysis.localization_tampering.score}%</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="padding:10px; border-bottom:1px solid #ddd;"><strong>Global Tampering:</strong></td>
+                                            <td style="padding:10px; border-bottom:1px solid #ddd;">${analysis.global_tampering.score}%</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="padding:10px; border-bottom:1px solid #ddd;"><strong>AI Generated:</strong></td>
+                                            <td style="padding:10px; border-bottom:1px solid #ddd;">${analysis.ai_generated.score}%</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="padding:10px;"><strong>Metadata:</strong></td>
+                                            <td style="padding:10px;">${analysis.metadata.score}%</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                            
+                            <div style="text-align:center; margin-top:20px;">
+                                <button onclick="document.getElementById('analysis-modal').remove()" class="btn" style="background:#3498db;">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                const existingModal = document.getElementById('analysis-modal');
+                if (existingModal) existingModal.remove();
+                
+                document.body.insertAdjacentHTML('beforeend', modalHTML);
+                
+            } catch (error) {
+                console.error("Analysis error:", error);
+                alert("Error getting analysis: " + error.message);
+            }
+        }
+
+        function switchAnalysisTab(tabName) {
+            document.getElementById('tab-overview-content').style.display = 'none';
+            document.getElementById('tab-marked-content').style.display = 'none';
+            document.getElementById('tab-heatmap-content').style.display = 'none';
+            document.getElementById('tab-regions-content').style.display = 'none';
+            document.getElementById('tab-scores-content').style.display = 'none';
+            
+            document.getElementById('tab-overview').style.background = '#95a5a6';
+            document.getElementById('tab-marked').style.background = '#95a5a6';
+            document.getElementById('tab-heatmap').style.background = '#95a5a6';
+            document.getElementById('tab-regions').style.background = '#95a5a6';
+            document.getElementById('tab-scores').style.background = '#95a5a6';
+            
+            document.getElementById(`tab-${tabName}-content`).style.display = 'block';
+            document.getElementById(`tab-${tabName}`).style.background = '#667eea';
+        }
+
+    </script>
+</body>
+</html>
