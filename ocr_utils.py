@@ -52,5 +52,5 @@ def extract_text_from_file(file_stream):
         return text
     except Exception as e:
         print(f"⚠️ OCR Error inside ocr_utils: {e}")
->>>>>>> 00f936c3ddfa0c434c6227e292369cb74909dee1
+        >>>>>>> 00f936c3ddfa0c434c6227e292369cb74909dee1
         return ""

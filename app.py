@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 from flask import Flask, jsonify, request, send_file
 from flask_cors import CORS
 from pymongo import MongoClient
@@ -21,9 +21,9 @@ from skimage import exposure, filters, feature
 import traceback
 import pytesseract
 
-# =============================================================
+
 # CONFIGURATION
-# =============================================================
+
 # IMPORTANT: Update this path to where you installed Tesseract
 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 
@@ -37,10 +37,10 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['QR_FOLDER'] = QR_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
-# =============================================================
+
 # IMPORTANT: PASTE YOUR NGROK URL BELOW
 # Example: 'https://abcd-1234.ngrok-free.app'
-# =============================================================
+
 app.config['BASE_URL'] = 'https://your-ngrok-url-here.ngrok-free.app'
 
 # Ensure folders exist
@@ -48,7 +48,7 @@ for folder in [UPLOAD_FOLDER, QR_FOLDER]:
     if not os.path.exists(folder):
         os.makedirs(folder)
 
-# =============================================================
+
 # DATABASE CONNECTION
 # =============================================================
 from urllib.parse import quote_plus
@@ -1184,7 +1184,6 @@ if __name__ == '__main__':
     print("🤖 AI Analysis: Enabled")
     print("📝 OCR: Enabled (Tesseract)")
     print("=" * 60 + "\n")
-=======
 from flask import Flask, jsonify, request, send_file
 from flask_cors import CORS
 from pymongo import MongoClient
@@ -1281,18 +1280,20 @@ def parse_json(data):
 
 # ==================== OCR FUNCTION ====================
 def extract_text_from_image(file_stream):
-    """
-    Extracts text from an image file stream using Tesseract OCR.
-    """
     try:
-        # Open image using PIL
         img = Image.open(file_stream)
-        # Extract text
-        text = pytesseract.image_to_string(img)
-        return text
+
+        try:
+            text = pytesseract.image_to_string(img)
+            print("OCR TEXT:", text)
+            return text
+        except Exception as ocr_error:
+            print("OCR not available:", ocr_error)
+            return "OCR NOT AVAILABLE"
+
     except Exception as e:
-        print(f"OCR Error: {e}")
-        return ""
+        print("Image Error:", e)
+        return "IMAGE ERROR"
 
 # ==================== AI ANALYSIS FUNCTIONS ====================
 
@@ -2370,5 +2371,4 @@ if __name__ == '__main__':
     print("🤖 AI Analysis: Enabled")
     print("📝 OCR: Enabled (Tesseract)")
     print("=" * 60 + "\n")
->>>>>>> 00f936c3ddfa0c434c6227e292369cb74909dee1
     app.run(debug=True, host='0.0.0.0', port=5000)

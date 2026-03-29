@@ -1,0 +1,4 @@
+flask
+numpy
+pytesseract
+Pillow
